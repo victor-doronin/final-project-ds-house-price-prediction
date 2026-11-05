@@ -1,0 +1,51 @@
+{
+  "audit": {
+    "raw_rows": 377185,
+    "duplicate_rows_removed": 242,
+    "rental_rows_removed": 398,
+    "land_rows_removed": 31403,
+    "invalid_target_rows_removed": 3684,
+    "prepared_rows": 339000,
+    "rows_with_missing_sqft": 25378,
+    "rows_with_missing_beds": 79282,
+    "rows_with_missing_baths": 92141
+  },
+  "split": {
+    "train_rows": 271442,
+    "test_rows": 67558
+  },
+  "baseline": {
+    "mae": 383788.23,
+    "rmse": 909567.53,
+    "r2": -0.0786
+  },
+  "ridge_log_target_clipped": {
+    "mae": 212161.42,
+    "rmse": 590569.88,
+    "r2": 0.5453
+  },
+  "hist_gradient_boosting": {
+    "mae": 189397.12,
+    "rmse": 539232.58,
+    "r2": 0.6209
+  },
+  "features": [
+    "sqft",
+    "beds",
+    "baths",
+    "stories",
+    "year_built",
+    "remodeled_year",
+    "lot_size_sqft",
+    "has_pool",
+    "has_fireplace",
+    "status",
+    "property_type",
+    "city",
+    "state",
+    "zipcode",
+    "heating",
+    "cooling",
+    "parking"
+  ]
+}

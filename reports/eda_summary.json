@@ -1,0 +1,54 @@
+{
+  "audit": {
+    "raw_rows": 377185,
+    "duplicate_rows_removed": 242,
+    "rental_rows_removed": 398,
+    "land_rows_removed": 31403,
+    "invalid_target_rows_removed": 3684,
+    "prepared_rows": 339000,
+    "rows_with_missing_sqft": 25378,
+    "rows_with_missing_beds": 79282,
+    "rows_with_missing_baths": 92141
+  },
+  "target": {
+    "mean": 590540.74,
+    "median": 339900.0,
+    "p90": 1199000.0,
+    "p99": 4850000.0
+  },
+  "sqft_target_spearman": 0.549,
+  "missing_percent": {
+    "remodeled_year": 56.57,
+    "stories": 39.18,
+    "lot_size_sqft": 27.61,
+    "baths": 27.18,
+    "beds": 23.39,
+    "year_built": 10.32,
+    "sqft": 7.49
+  },
+  "median_price_by_top_state": {
+    "oh": 149900.0,
+    "il": 279900.0,
+    "tx": 290000.0,
+    "tn": 299900.0,
+    "fl": 310000.0,
+    "nc": 319000.0,
+    "nv": 345000.0,
+    "wa": 512970.0,
+    "ca": 699900.0,
+    "ny": 799000.0
+  },
+  "statistical_tests": {
+    "sqft_price_spearman": {
+      "statistic": 0.549,
+      "pvalue": 0.0,
+      "sample_size": 313622
+    },
+    "price_by_state_kruskal": {
+      "statistic": 47067.39,
+      "pvalue": 0.0,
+      "effect_size_epsilon_squared": 0.158,
+      "sample_size": 297877
+    }
+  }
+}
