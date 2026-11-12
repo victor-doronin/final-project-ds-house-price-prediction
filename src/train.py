@@ -8,7 +8,7 @@ import joblib
 import numpy as np
 from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
 from sklearn.dummy import DummyRegressor
-from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
@@ -126,6 +126,54 @@ def build_hist_model() -> QuantileClippedRegressor:
     )
 
 
+def build_random_forest_model() -> QuantileClippedRegressor:
+    """Tree bagging model used as the third, non-linear experiment."""
+    numeric = Pipeline([("imputer", SimpleImputer(strategy="median"))])
+    categorical = Pipeline(
+        [
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            (
+                "ordinal",
+                OrdinalEncoder(
+                    handle_unknown="use_encoded_value",
+                    unknown_value=-1,
+                    max_categories=100,
+                ),
+            ),
+        ]
+    )
+    preprocessing = ColumnTransformer(
+        [
+            ("numeric", numeric, NUMERIC_FEATURES),
+            ("categorical", categorical, CATEGORICAL_FEATURES),
+        ]
+    )
+    regressor = Pipeline(
+        [
+            ("preprocessing", preprocessing),
+            (
+                "regressor",
+                RandomForestRegressor(
+                    n_estimators=60,
+                    max_depth=18,
+                    min_samples_leaf=3,
+                    max_features=0.8,
+                    n_jobs=-1,
+                    random_state=42,
+                ),
+            ),
+        ]
+    )
+    log_target_model = TransformedTargetRegressor(
+        regressor=regressor, func=np.log1p, inverse_func=np.expm1
+    )
+    return QuantileClippedRegressor(
+        estimator=log_target_model,
+        lower_quantile=0.01,
+        upper_quantile=0.99,
+    )
+
+
 def train(data_path: Path, output_dir: Path) -> dict:
     raw = load_raw_data(data_path)
     data, audit = prepare_dataset(raw)
@@ -148,11 +196,15 @@ def train(data_path: Path, output_dir: Path) -> dict:
     model = build_model().fit(x_train, y_train)
     model_metrics = _metrics(y_test, model.predict(x_test))
 
+    random_forest = build_random_forest_model().fit(x_train, y_train)
+    random_forest_metrics = _metrics(y_test, random_forest.predict(x_test))
+
     hist_model = build_hist_model().fit(x_train, y_train)
     hist_metrics = _metrics(y_test, hist_model.predict(x_test))
 
     output_dir.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, output_dir / "ridge_model.joblib")
+    joblib.dump(random_forest, output_dir / "random_forest_model.joblib")
     joblib.dump(hist_model, output_dir / "hist_model.joblib")
 
     report = {
@@ -160,6 +212,7 @@ def train(data_path: Path, output_dir: Path) -> dict:
         "split": {"train_rows": len(train_data), "test_rows": len(test_data)},
         "baseline": baseline_metrics,
         "ridge_log_target_clipped": model_metrics,
+        "random_forest": random_forest_metrics,
         "hist_gradient_boosting": hist_metrics,
         "features": MODEL_FEATURES,
     }

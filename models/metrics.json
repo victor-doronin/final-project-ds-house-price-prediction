@@ -24,11 +24,29 @@
     "rmse": 590569.88,
     "r2": 0.5453
   },
+  "random_forest": {
+    "mae": 189894.05,
+    "rmse": 547055.99,
+    "r2": 0.6098
+  },
   "hist_gradient_boosting": {
     "mae": 189397.12,
     "rmse": 539232.58,
     "r2": 0.6209
   },
+  "hist_gradient_boosting_tuned": {
+    "mae": 191839.46,
+    "rmse": 548620.63,
+    "r2": 0.6076,
+    "best_cv_mae": 199763.0,
+    "best_params": {
+      "max_leaf_nodes": 63,
+      "max_iter": 150,
+      "learning_rate": 0.04,
+      "l2_regularization": 5.0
+    }
+  },
+  "final_model": "hist_gradient_boosting",
   "features": [
     "sqft",
     "beds",
